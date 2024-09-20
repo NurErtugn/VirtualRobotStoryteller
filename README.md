@@ -19,3 +19,6 @@ line 4 and line 6,  specify your API key
 
 d) Modify the virtualRobotInteraction.html file
 change the lines 121, 153, 173, 193 with the location in your computer of png files; DALLE, DALLE1, DALLE2, DALLE3
+
+
+Step 5: run main.py to start the program
