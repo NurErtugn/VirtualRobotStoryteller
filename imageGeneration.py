@@ -10,9 +10,9 @@ from PIL import ImageTk        # for GUI thumbnails of what we got
 from openai import OpenAI
 import storytelling as st
 
-OpenAI.api_key = "sk-robot-daniel-FOQfOlJ9dCGtSLaSTq2RT3BlbkFJ3fiAo6v08Aflm70zQmss"
+OpenAI.api_key = "YOUR_KEY"
 
-os.environ["OPENAI_API_KEY"] = "sk-robot-daniel-FOQfOlJ9dCGtSLaSTq2RT3BlbkFJ3fiAo6v08Aflm70zQmss"
+os.environ["OPENAI_API_KEY"] = "YOUR_KEY"
 client = OpenAI() 
 
 def generate_image(prompt): 
