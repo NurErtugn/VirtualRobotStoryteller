@@ -115,6 +115,20 @@
 		#submit-button:hover{
 			background-color: rgb(248, 149, 19);
 		}
+		#submit-button5{
+			font-family: Arial, Helvetica, sans-serif;
+			font-weight: 900;
+			padding: 15px;
+			letter-spacing: 1px;
+			font-size: 20px;
+			background-color: rgb(255, 220, 78);
+			border: 5px solid rgb(248, 149,19);
+			cursor: pointer; /*cursor to hand pointer*/		
+			border-radius: 20px;	
+		}
+		#submit-button5:hover{
+			background-color: rgb(248, 149, 19);
+		}
 
 		.container2 {
 			max-width: 600px;
@@ -358,7 +372,7 @@
 	<br>
 	
 	<p>&#x1F916;: Moving Right Along; Are you ready to generate your first story with me ? Click to "Clear All" button to restart !</p>
-	<button type="submit" id= "submit-button" onclick="sendStoryData(this)">&#x1F44D; Submit</button>
+	<button type="submit" id= "submit-button5" onclick="sendStoryData(this)">&#x1F44D; Submit</button>
 	<button id="submit-button" onclick = "clearAll(this)">Clear All</button>
 	
 	</div>
@@ -499,6 +513,7 @@ Answers:
 		<button onclick="saveTextBoxes()">Save Session</button><br>
 		<button onclick="goNextStep()"> >Next Step</button>
 		<button onclick="stopServer()">Exit</button>
+		<button onclick="startAgain()">Start Again</button>
 		<br>
 		
 		
@@ -663,7 +678,68 @@ Answers:
 			globalCounter+=1;
 		}
 	}
+
+	globalCounter2=0;		
+	function startAgain(){
 	
+		if (globalCounter2>0){
+		
+			document.getElementById('story-form').reset();
+			document.getElementById("length").innerHTML = 400;
+			//document.getElementById("story_input").style.display= "none";
+
+			document.getElementById("storyClass").style.display= "none";
+			document.getElementById("question_selector").style.display="none";
+			document.getElementById("questionPart").style.display="none";
+			hideSlider();
+			// remove readonly label 
+			document.getElementById("story").removeAttribute('readonly');
+			document.querySelectorAll('#ageSelector input[type="radio"]').forEach((input) => {
+				input.removeAttribute('disabled');
+			});
+			document.querySelectorAll('input[type="radio"][name="ai"]').forEach((radio) => {
+				radio.removeAttribute('disabled');
+			});
+
+			const submitButton = document.getElementById("submit-button5");
+			if (submitButton) {
+				submitButton.disabled = false;
+				submitButton.classList.remove('disabled');
+				submitButton.style.backgroundColor = ""; // Reset inline background color
+				submitButton.style.borderColor = "";     // Reset inline border color if any
+			}
+
+			const bottomButtonIds = ["editButton", "keepStoryButton", "regenerateButton", "suggestionButton"];
+
+			// Loop through each button ID and reset its properties
+			bottomButtonIds.forEach(buttonId => {
+				const button = document.getElementById(buttonId);
+				if (button) {
+					button.style.display = "inline-block";  // Make the button visible
+					button.disabled = false;                // Enable the button
+					button.removeAttribute("readonly");     // Remove readonly if set
+				}
+			});
+		
+
+			
+			const socket = new WebSocket('ws://localhost:10000');
+			socket.addEventListener('open', function(event){
+			socket.send("startagain" );
+			socket.close;
+		});	
+			
+		}else{
+			// if the global counter less then 1, means im trying to exit without saving so im sending an alert to the user 
+			alert("Warning: You are proceeding without saving the session");
+			globalCounter2+=1;
+		}
+	
+		
+
+
+
+	}
 	// kept all the quesitons of AI 
 	keepButton2.addEventListener("click", function(){
 		const socket = new WebSocket('ws://localhost:10000');
@@ -1098,76 +1174,7 @@ Answers:
 		return null;
 		}
 	
-    /*const sendStoryData = (some) => {
-		const age1= !document.getElementById('age1').checked;
-		const age2= !document.getElementById('age2').checked;
-		const age3= !document.getElementById('age3').checked;
-		const age4= !document.getElementById('age4').checked;
-		const age5= !document.getElementById('age5').checked;
-		const ageCheck = age1 && age2 && age3 && age4 && age5;
-
-		const ai0 = !document.getElementById('ai0').checked;
-		const ai1 = !document.getElementById('ai1').checked;
-		const ai2 = !document.getElementById('ai2').checked;
-		const ai3 = !document.getElementById('ai3').checked;
-		const ai4 = !document.getElementById('ai4').checked;
-		const aiCheck = ai0 && ai1 && ai2 && ai3 && ai4;
-
-		const storyCheck =document.getElementById("story").value.trim() === "";
-		if(aiCheck || ageCheck || storyCheck){
-			alert("Warning! Fill in the whole form");
-		}else{		
-			//display the story details and generated story
-			document.getElementById("storyClass").style.display="block";
-			const socket = new WebSocket('ws://localhost:10000');
-			socket.addEventListener('open', function (event) {
-				some.disabled=true;
-				some.classList.add('disabled');
-
-				const borderColor= getComputedStyle(some).borderColor;
-				some.style.backgroundColor= borderColor;
-
-				const clearText="Clear All";
-				const foundClearButton = findButtonByText(clearText);
-				if(foundClearButton){
-					console.log('found the requested button');
-					foundClearButton.classList.add('disabled');
-				} else {
-					console.log('button not found');
-				}
-
-
-
-				var ai = document.querySelector('input[name="ai"]:checked').value;
-				console.log(ai)
-				story =document.getElementById("story")
-				story.readOnly= true; 
-				var story = story.value;
-				var slider = document.getElementById("length");
-				//slider.readOnly= true;
-				var length = slider.innerHTML;
-				
-		
-				var selectedAge= document.querySelector('input[name="age"]:checked');
-				var level = selectedAge.value ;
-
-				const form = document.getElementById('story-form');
-				const radioButtons = form.querySelectorAll('input[type="radio"]');
-				//Disable all buttons
-				radioButtons.forEach(radio => {
-					radio.disabled=true;
-				});
-
-
-				var message = ai + "|" + story + "|"  + length + "|"+ level; 
-				socket.send(message);	
-				socket.close();
-				console.log("sending the message")
-			});
-		}
-    }
-		*/
-	const sendStoryData = (some) => {
+    	const sendStoryData = (some) => {
 		console.log("sendStoryData function called");
 
 		const age1 = !document.getElementById('age1').checked;

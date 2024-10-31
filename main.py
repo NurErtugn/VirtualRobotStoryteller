@@ -2,6 +2,7 @@
 import asyncio
 import json
 import os
+from pathlib import Path
 import webbrowser
 import re
 import storytelling as ai
@@ -10,6 +11,7 @@ import server
 from server import send_data, start_thread,join_thread
 from multiprocessing.connection import Client
 import tracemalloc
+
 tracemalloc.start()
 
 # For web module
@@ -121,7 +123,7 @@ class StorytellingApp:
             if language == 'fr':
                 self.story_prompt = ai.translate(ai.gSbA(story, level, str(self.sl)), 'en', 'fr')
             elif language != 'en':
-                self.story_prompt = ai.gSbA(story + "In German", level, str(self.sl))
+                self.story_prompt = ai.translate(ai.gSbA(story, level, str(self.sl)), 'en', 'de')
             else:
                 self.story_prompt = ai.gSbA(story, level, str(self.sl))
         elif ai_level == 5:
@@ -130,7 +132,7 @@ class StorytellingApp:
             if language == 'fr':
                 self.story_prompt = ai.translate(ai.generate_lecture_story(story, str(self.sl), level), 'en', 'fr')
             elif language != 'en':
-                self.story_prompt = ai.generate_lecture_story(story + "In German", str(self.sl), level)
+                self.story_prompt = ai.translate(ai.generate_lecture_story(story, str(self.sl), level), 'en', 'de')
             else:
                 self.story_prompt = ai.generate_lecture_story(story, str(self.sl), level)
         elif ai_level == 6:
@@ -139,7 +141,7 @@ class StorytellingApp:
             if language == 'fr':
                 self.story_prompt = ai.translate(ai.generate_lecture_subtopics(story, str(self.sl), level), 'en', 'fr')
             elif language != 'en':
-                self.story_prompt = ai.generate_lecture_subtopics(story + "In German", str(self.sl), level)
+                self.story_prompt = ai.translate(ai.generate_lecture_subtopics(story, str(self.sl), level), 'en', 'de')
             else:
                 self.story_prompt = ai.generate_lecture_subtopics(story, str(self.sl), level)
         elif ai_level == 7:
@@ -148,7 +150,7 @@ class StorytellingApp:
             if language == 'fr':
                 self.story_prompt = ai.translate(ai.generate_lecture_topic(story, str(self.sl), level), 'en', 'fr')
             elif language != 'en':
-                self.story_prompt = ai.generate_lecture_topic(story + "In German", str(self.sl), level)
+                self.story_prompt = ai.translate(ai.generate_lecture_topic(story, str(self.sl), level), 'en', 'de')
             else:
                 self.story_prompt = ai.generate_lecture_topic(story, str(self.sl), level)
 
@@ -352,33 +354,42 @@ class StorytellingApp:
             self.robot_interaction()
         elif(local_data=="exit"):
             self.finish_state()
+        elif(local_data=="startagain"):
+            self.greet()
         else: 
-            dictionary = json.loads(local_data)
-            filename= 'C:/Users/NUR/nur_sm/index_files/sunum/savedSessions.json'
-            if os.path.exists(filename):
-                with open(filename, 'r') as file:
-                    try:
-                        data = json.load(file)
-                        if isinstance(data, list):
-                            data.append(dictionary)
-                        else:
-                            data = [data, dictionary]
-                    except json.JSONDecodeError:
-                        data = [dictionary]
-            else:
-                data = [dictionary]
+            try:
+                dictionary = json.loads(local_data)
+                filename= 'C:/Users/NUR/nur_sm/index_files/sunum/savedSessions.json'
+                if os.path.exists(filename):
+                    with open(filename, 'r') as file:
+                        try:
+                            data = json.load(file)
+                            if isinstance(data, list):
+                                data.append(dictionary)
+                            else:
+                                data = [data, dictionary]
+                        except json.JSONDecodeError:
+                            data = [dictionary]
+                else:
+                    data = [dictionary]
 
-            with open(filename, 'w') as file:
-                json.dump(data, file, indent=4)
-            #keep the story executed so generate story image based on it here and save it
-    
-            self.goodbye() # looping back in state but now; saving the entry is not possible
+                with open(filename, 'w') as file:
+                    json.dump(data, file, indent=4)
+                #keep the story executed so generate story image based on it here and save it
+
+            except json.JSONDecodeError:
+                print("JSONDecodeError: Invalid data received:", local_data)
+                # Log the error and proceed without saving if JSON decoding fails
+
+                self.goodbye() # looping back in state but now; saving the entry is not possible
     
 
     def robot_interaction(self): 
         print("Executing state ROBOT INTERACTION")
         if(self.image_generate== False):
-            prompt_image = ig.generate_image_begin(self.story_prompt, self.level)        
+            prompt_image = ig.generate_image_begin(self.story_prompt, self.level)     
+            cwd = os.getcwd()    
+            print("current working directory", cwd)
             asyncio.run(send_data("allow"))
         if(self.image_generate== True):
             summary = ai.generate_summary(self.story_prompt)
@@ -428,10 +439,13 @@ def main():
     app = StorytellingApp()
     print("Starting the server")
     server.start_thread()  
-    begin_html= os.path.abspath('/Users/NUR/nur_sm/index_files/sunum/index.html') 
+    #it is expected form users to put this after their home path to storytellerRobot directory
+    home_path = Path.home() / 'storytellerRobot' #e ex; C:\Users\Nur
+    index_html_path= home_path/ 'secondary.html'
+    
     print("Started the server") 
-    print("Opening:", begin_html)
-    webbrowser.open_new_tab(begin_html)
+    print("Opening:", index_html_path)
+    webbrowser.open_new_tab(index_html_path)
     config_language()
     print("configured the language")
     print("Starting the server")

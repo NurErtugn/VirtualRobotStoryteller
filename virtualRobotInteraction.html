@@ -118,7 +118,7 @@
 </head>
 <body>
     <h1>&#x1F916; Storytime with Alpha-Mini &#x1F916;</h1>
-    <img src="C:/Users/NUR/nur_sm/index_files/sunum/DALLE.png" width="250" height="250">
+    <img src="DALLE.png" width="250" height="250">
     <br>
 
     <div class="container">
@@ -150,11 +150,18 @@
                 <textarea class="text-area" id="question1" readonly></textarea>
                 <button class="side-button" onclick="askQuestion1()">ASK</button>
             </div>
-            <img src="C:/Users/NUR/nur_sm/index_files/sunum/DALLE1.png" width="200" height="200">
-            <div class="text-button-group">
+            <img src="DALLE1.png" width="200" height="200">
+            <div class="text-button-group" >
+                <button class="side-button" id="writeAnswer1">Write Your Answer</button>
+                <textarea class="text-area" id="answerText1" style="display: none;"></textarea>
+            </div>
+
+            <div class="text-button-group" id="areaAnswer1" style="display: none;">
                 <textarea class="text-area" id="answer1" readonly></textarea>
                 <button class="side-button" onclick="tellAnswer1()">ANSWER</button>
             </div>
+            <button class="side-button" id="revealButton1">Reveal Answer</button>
+
         </div>
     </div>
 
@@ -170,11 +177,18 @@
                 <textarea class="text-area" id="question2" readonly></textarea>
                 <button class="side-button" onclick="askQuestion2()">ASK</button>
             </div>
-            <img src="C:/Users/NUR/nur_sm/index_files/sunum/DALLE2.png" width="200" height="200">
-            <div class="text-button-group">
+            <img src="DALLE2.png" width="200" height="200">
+
+            <div class="text-button-group" >
+                <button class="side-button" id="writeAnswer2">Write Your Answer</button>
+                <textarea class="text-area" id="answerText2" style="display: none;"></textarea>
+            </div>
+            <div class="text-button-group" id="areaAnswer2" style="display: none;">
                 <textarea class="text-area" id="answer2" readonly></textarea>
                 <button class="side-button" onclick="tellAnswer2()">ANSWER</button>
             </div>
+            <button class="side-button" id="revealButton2">Reveal Answer</button>
+
         </div>
     </div>
 
@@ -190,11 +204,16 @@
                 <textarea class="text-area" id="question3" readonly></textarea>
                 <button class="side-button" onclick="askQuestion3()">ASK</button>
             </div>
-            <img src="C:/Users/NUR/nur_sm/index_files/sunum/DALLE3.png" width="200" height="200">
-            <div class="text-button-group">
+            <img src="DALLE3.png" width="200" height="200">
+            <div class="text-button-group" >
+                <button class="side-button" id="writeAnswer3">Write Your Answer</button>
+                <textarea class="text-area" id="answerText3" style="display: none;"></textarea>
+            </div>
+            <div class="text-button-group" id="areaAnswer3" style="display: none;">
                 <textarea class="text-area" id="answer3" readonly></textarea>
                 <button class="side-button" onclick="tellAnswer3()">ANSWER</button>
             </div>
+            <button class="side-button" id="revealButton3">Reveal Answer</button>
         </div>
     </div>
 
@@ -251,9 +270,13 @@
                     updateHeight(sessionQuestion3);
                     updateHeight(sessionAnswer3);
                 }
-            }   
- 
+            } 
+            const currentPath = window.location.pathname;
+            console.log(currentPath); // Outputs something like "/path/to/your/file.html"
+    
         }
+        
+
 
         function speakAndAnimate(text,player) {
             var language = localStorage.getItem('language');
@@ -318,6 +341,112 @@
             player = document.getElementById('player1');
             speakAndAnimate(q1,player);
         }
+
+        var writeAnswer1= document.getElementById('writeAnswer1');
+        var answerText1 = document.getElementById("answerText1");
+
+        writeAnswer1.addEventListener("click", function(){
+            if(this.innerText=== "Save The Answer"){
+                answerText1.readOnly = "true";
+                this.innerText= "Modify";
+
+            }else{
+                // step 1 : show the text area so the user can write entry
+                answerText1.style.display="block";
+                answerText1.readOnly = false;
+                // change the inner text of this button
+                this.innerText= "Save The Answer";
+            }
+        });
+      
+
+        var buttonReveal1 = document.getElementById('revealButton1');
+        var areaAnswer1= document.getElementById('areaAnswer1');
+        buttonReveal1.addEventListener("click", function(){
+            if(this.innerText=== "Hide Answer"){
+                // step 1: now change the button text  to previous
+                this.innerText = "Reveal Answer"; 
+                // step 2: hide the answer
+                areaAnswer1.style.display= "none";              
+            }else{
+                // step 1 : reveal the answer and update the height of the answer area
+                areaAnswer1.style.display= "block";
+                areaAnswer1.style.display = "flex";
+                updateHeight(document.getElementById('answer1'));
+                // step 2: change the name of the button
+                buttonReveal1.innerText="Hide Answer";
+            }
+        });
+
+        var buttonReveal2 = document.getElementById('revealButton2');
+        var areaAnswer2= document.getElementById('areaAnswer2');
+        buttonReveal2.addEventListener("click", function(){
+            if(this.innerText=== "Hide Answer"){
+                // step 1: now change the button text  to previous
+                this.innerText = "Reveal Answer"; 
+                // step 2: hide the answer
+                areaAnswer2.style.display= "none";              
+            }else{
+                // step 1 : reveal the answer and update the height of the answer area
+                areaAnswer2.style.display= "block";
+                areaAnswer2.style.display = "flex";
+                updateHeight(document.getElementById('answer2'));
+                // step 2: change the name of the button
+                buttonReveal2.innerText="Hide Answer";
+            }
+        });
+
+        var writeAnswer2= document.getElementById('writeAnswer2');
+        var answerText2 = document.getElementById("answerText2");
+
+        writeAnswer2.addEventListener("click", function(){
+            if(this.innerText=== "Save The Answer"){
+                answerText2.readOnly = "true";
+                this.innerText= "Modify";
+
+            }else{
+                // step 1 : show the text area so the user can write entry
+                answerText2.style.display="block";
+                answerText2.readOnly = false;
+                // change the inner text of this button
+                this.innerText= "Save The Answer";
+            }
+        });
+
+        var buttonReveal3 = document.getElementById('revealButton3');
+        var areaAnswer3= document.getElementById('areaAnswer3');
+        buttonReveal3.addEventListener("click", function(){
+            if(this.innerText=== "Hide Answer"){
+                // step 1: now change the button text  to previous
+                this.innerText = "Reveal Answer"; 
+                // step 2: hide the answer
+                areaAnswer3.style.display= "none";              
+            }else{
+                // step 1 : reveal the answer and update the height of the answer area
+                areaAnswer3.style.display= "block";
+                areaAnswer3.style.display = "flex";
+                updateHeight(document.getElementById('answer3'));
+                // step 2: change the name of the button
+                buttonReveal3.innerText="Hide Answer";
+            }
+        });
+
+        var writeAnswer3= document.getElementById('writeAnswer3');
+        var answerText3 = document.getElementById("answerText3");
+
+        writeAnswer3.addEventListener("click", function(){
+            if(this.innerText=== "Save The Answer"){
+                answerText3.readOnly = "true";
+                this.innerText= "Modify";
+
+            }else{
+                // step 1 : show the text area so the user can write entry
+                answerText3.style.display="block";
+                answerText3.readOnly = false;
+                // change the inner text of this button
+                this.innerText= "Save The Answer";
+            }
+        });
 
         function tellAnswer1() {
             speechSynthesis.cancel(); // stop any ongoing speech
